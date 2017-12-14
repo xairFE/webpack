@@ -1,66 +1,89 @@
+const path = require('path')
+const fs = require('fs')
+const {
+  sortDependencies,
+  installDependencies,
+  runLintFix,
+  printMessage,
+} = require('./utils')
+
 module.exports = {
-  "helpers": {
-    "if_or": function (v1, v2, options) {
+  helpers: {
+    if_or: function(v1, v2, options) {
       if (v1 || v2) {
-        return options.fn(this);
+        return options.fn(this)
       }
 
-      return options.inverse(this);
-    }
+      return options.inverse(this)
+    },
   },
-  "prompts": {
-    "name": {
-      "type": "string",
-      "required": true,
-      "message": "Project name"
+  prompts: {
+    name: {
+      type: 'string',
+      required: true,
+      message: 'Project name',
     },
-    "description": {
-      "type": "string",
-      "required": false,
-      "message": "Project description",
-      "default": "A Vue.js project"
+    description: {
+      type: 'string',
+      required: false,
+      message: 'Project description',
+      default: 'A Vue.js project',
     },
-    "author": {
-      "type": "string",
-      "message": "Author"
+    author: {
+      type: 'string',
+      message: 'Author',
     },
-    "lint": {
-      "type": "confirm",
-      "message": "Use ESLint to lint your code?"
-    },
-    "lintConfig": {
-      "when": "lint",
-      "type": "list",
-      "message": "Pick an ESLint preset",
-      "choices": [
+    build: {
+      type: 'list',
+      message: 'Vue build',
+      choices: [
         {
-          "name": "Standard (https://github.com/feross/standard)",
-          "value": "standard",
-          "short": "Standard"
+          name: 'Runtime + Compiler: recommended for most users',
+          value: 'standalone',
+          short: 'standalone',
         },
         {
-          "name": "none (configure it yourself)",
-          "value": "none",
-          "short": "none"
-        }
-      ]
+          name:
+            'Runtime-only: about 6KB lighter min+gzip, but templates (or any Vue-specific HTML) are ONLY allowed in .vue files - render functions are required elsewhere',
+          value: 'runtime',
+          short: 'runtime',
+        },
+      ],
+    },
+    lint: {
+      type: 'confirm',
+      message: 'Use ESLint to lint your code?',
+    },
+    lintConfig: {
+      when: 'lint',
+      type: 'list',
+      message: 'Pick an ESLint preset',
+      choices: [
+        {
+          name: 'Standard (https://github.com/standard/standard)',
+          value: 'standard',
+          short: 'Standard',
+        },
+        {
+          name: 'Airbnb (https://github.com/airbnb/javascript)',
+          value: 'airbnb',
+          short: 'Airbnb',
+        },
+        {
+          name: 'none (configure it yourself)',
+          value: 'none',
+          short: 'none',
+        },
+      ],
     }
-    // ,"unit": {
-    //   "type": "confirm",
-    //   "message": "Setup unit tests with Karma + Mocha?"
-    // },
-    // "e2e": {
-    //   "type": "confirm",
-    //   "message": "Setup e2e tests with Nightwatch?"
-    // }
   },
-  "filters": {
-    ".eslintrc.js": "lint",
-    ".eslintignore": "lint",
-    "config/test.env.js": false,
-    "test/unit/**/*": false,
-    "build/webpack.test.conf.js": false,
-    "test/e2e/**/*": false
+  filters: {
+    '.eslintrc.js': 'lint',
+    '.eslintignore': 'lint'
   },
-  "completeMessage": "To get started:\n\n  {{^inPlace}}cd {{destDirName}}\n  {{/inPlace}}npm install\n  npm run dev\n\nDocumentation can be found at https://github.com/xairFE/webpack"
-};
+  complete: function(data, { chalk }) {
+    const green = chalk.green
+    sortDependencies(data, green)
+    printMessage(data, chalk)
+  },
+}

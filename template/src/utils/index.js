@@ -3,7 +3,10 @@ export function formatNumer (n) {
 }
 
 export function setStorage (key, value, type = 'localStorage') {
-  window[type].setItem(key, typeof value === 'object' ? JSON.stringify(value) : value)
+  window[type].setItem(
+    key,
+    typeof value === 'object' ? JSON.stringify(value) : value
+  )
 }
 
 export function getStorage (key, type = 'localStorage') {
@@ -43,9 +46,7 @@ export function setDocumentTitle (title, subtitle = '') {
     iframe.style.display = 'none'
     iframe.src = '/favicon.ico'
     iframe.onload = () => {
-      setTimeout(() => {
-        document.body.removeChild(iframe)
-      }, 0)
+      setTimeout(() => document.body.removeChild(iframe), 0)
     }
     document.body.appendChild(iframe)
   }

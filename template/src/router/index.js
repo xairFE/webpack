@@ -1,25 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import {setDocumentTitle} from 'utils/index'
+import { share } from 'utils/wx'
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/demo/index'
-    },
-    {
-      path: '/demo',
       name: 'demo',
-      component: require('views/demo/demo.vue'),
-      children: [
-        {
-          path: 'index',
-          alias: '/demo',
-          component: resolve => require(['views/demo/index.vue'], resolve)
-        }
-      ]
+      component: require('views/demo/index').default,
+      meta: {
+        title: '测试'
+      }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) setDocumentTitle(to.meta.title)
+  next()
+  setTimeout(() => share(), 10)
+})
+
+export default router
