@@ -21,7 +21,7 @@ export const queryData = (method, url) => {
         }
         reject(new Error('正在前往登录...'))
       } else {
-        data.status === 200 ? resolve(data.data) : reject(data.message || '服务器内部错误')
+        data.status === 200 ? resolve(data.data) : reject(new Error(data.message || '服务器内部错误'))
       }
     }).catch((err) => {
       reject(new Error(getErrMessage(err)))
